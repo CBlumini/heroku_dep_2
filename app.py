@@ -23,8 +23,8 @@ data.head()
 #the data does not come in the right form to do math on it. So convert the times to minutes and decimal seconds
 #maybe setup a compute file to do this by itself later
 
-def create_time_columns(bare_frame):
 
+def create_time_columns(bare_frame):
     def convertTime (time):
         timeMinutes = (time.hour*60)+(time.minute)+(time.second/60)
         return round(timeMinutes, 2)
@@ -45,12 +45,14 @@ def create_time_columns(bare_frame):
 
     return bare_frame
 
+
 time_df = create_time_columns(data)
 
 reduced2 = time_df[["Name","Swim Minutes","Swim+T1","Plus Bike","Plus T2","Total","Gender Place"]]
 reduced2["Start"] = 0
 reduced2 = reduced2.drop(25)
 
+#create the para coord plot
 dimensions = list([
             dict(range = [0, 1],
                 label = 'Start', values = reduced2['Start']),            
@@ -65,36 +67,34 @@ dimensions = list([
             dict(range = [reduced2["Total"].min(), reduced2["Total"].max()],
                 label = 'Total Time', values = reduced2['Total']),
             dict(range=[0,reduced2['Gender Place'].max()], tickvals = reduced2['Gender Place'], ticktext = reduced2['Name'],
-                       label='Competitor', values=reduced2['Gender Place'])
+                    label='Competitor', values=reduced2['Gender Place'])
         ])
 
-fig = go.Figure(data=go.Parcoords(line = dict(color = reduced2['Gender Place'],
-                   colorscale = [[.0,'rgba(255,0,0,0.1)'],[0.2,'rgba(0,255,0,0.1)'],[.4,'rgba(0,0,255,0.1)'], 
-                                 [.6,'rgba(0,255,255,0.1)'], [.8, 'rgba(255,0,255,0.1)'], [1, 'rgba(0,0,0,0.1)']]), dimensions=dimensions))
+para_cor = go.Figure(data=go.Parcoords(line = dict(color = reduced2['Gender Place'],
+                colorscale = [[.0,'rgba(255,0,0,0.1)'],[0.2,'rgba(0,255,0,0.1)'],[.4,'rgba(0,0,255,0.1)'], 
+                                [.6,'rgba(0,255,255,0.1)'], [.8, 'rgba(255,0,255,0.1)'], [1, 'rgba(0,0,0,0.1)']]), dimensions=dimensions))
 
-fig.update_layout(
+para_cor.update_layout(
     title="Triathalon Results",
     width=1920,
-    height=1080
-)
+    height=1080)
+
 
 app = dash.Dash(__name__, external_stylesheets = [dbc.themes.BOOTSTRAP])
 server = app.server
 app.config.suppress_callback_exceptions = True
 
-#set the app.layout
+#set the app.layout so we have two tabs
 app.layout = html.Div([
-    dcc.Tabs(id="tabs", value='tab-1', children=[
-        dcc.Tab(label='Tab one', value='tab-1'),
-        dcc.Tab(label='Tab two', value='tab-2'),
-    ]),
+    dcc.Tabs(id="tabs", value='tab-1', children=[dcc.Tab(label='Data Table', value='tab-1'), 
+                                                 dcc.Tab(label='Age vs Performance', value='tab-2'),
+                                                 dcc.Tab(label='Performance Plot', value='tab-3'),]),
     html.Div(id='tabs-content')
 ])
 
 #create a data table
 
-@app.callback(Output('tabs-content', 'children'),
-              [Input('tabs', 'value')])
+@app.callback(Output('tabs-content', 'children'), [Input('tabs', 'value')])
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div(dash_table.DataTable(
@@ -118,7 +118,10 @@ def render_content(tab):
                             sort_by=[]
                         )
                         )
-    elif tab == 'tab-2':
-        return dcc.Graph(figure=fig)
+    elif tab == 'tab-3':
+        return dcc.Graph(figure=para_cor)
 
 app.run_server(debug=True, use_reloader=False) 
+
+
+
