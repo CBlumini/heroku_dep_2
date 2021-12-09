@@ -17,13 +17,13 @@ print('hello')
 
 #this would be the point to read the data from the DB
 
-data = pd.read_excel('santa_cruz_data.xlsx', header = 0, index_col=None)
+#can just provide an s3 or github link I hope
+#data = pd.read_excel('santa_cruz_data.xlsx', header = 0, index_col=None)
+data = pd.read_excel('raw.githubusercontent.com/cblumini/heroku_dep_2/main/santa_cruz_data.xlsx', header = 0, index_col=None)
 data.head()
 
 #the data does not come in the right form to do math on it. So convert the times to minutes and decimal seconds
 #maybe setup a compute file to do this by itself later
-
-
 def create_time_columns(bare_frame):
     def convertTime (time):
         timeMinutes = (time.hour*60)+(time.minute)+(time.second/60)
@@ -79,7 +79,12 @@ para_cor.update_layout(
     width=1920,
     height=1080)
 
+#create a scatter plot
+scatter = px.scatter(time_df, x=time_df['Age'], y=time_df['Gender Place'])
+#scatter.show()
 
+
+#create the dash app
 app = dash.Dash(__name__, external_stylesheets = [dbc.themes.BOOTSTRAP])
 server = app.server
 app.config.suppress_callback_exceptions = True
@@ -93,7 +98,6 @@ app.layout = html.Div([
 ])
 
 #create a data table
-
 @app.callback(Output('tabs-content', 'children'), [Input('tabs', 'value')])
 def render_content(tab):
     if tab == 'tab-1':
@@ -104,20 +108,27 @@ def render_content(tab):
                             style_table={'overflowX': 'scroll'},
                             style_cell={
                                 'height': '90',
-                                # all three widths are needed
-                                'minWidth': '140px', 'width': '140px', 'maxWidth': '140px',
-                                'whiteSpace': 'normal'
-                            },
+                                #'minWidth': '110%',
+                                'minWidth': '100px', 'width': '120px', 'maxWidth': '140px',
+                                'whiteSpace': 'normal'},
+                            style_cell_conditional=[        {
+                                'if': {'column_id': 'Name'},
+                                'textAlign': 'center'
+                                    }],
                             page_current= 0,
-                            page_size= 50,
-                            page_action='native',
+                            page_size=15,
                             filter_action='native',
                             filter_query='',
                             sort_action='native',
-                            sort_mode='multi',
-                            sort_by=[]
+                            sort_mode='single',
+                            sort_by=[],
+                            style_as_list_view=True,
+                            hidden_columns=[],
                         )
                         )
+    elif tab == 'tab-2':
+        return dcc.Graph(figure=scatter)
+    
     elif tab == 'tab-3':
         return dcc.Graph(figure=para_cor)
 
