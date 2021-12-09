@@ -27,7 +27,7 @@ def create_time_columns(bare_frame):
 
     def convertTime (time):
         timeMinutes = (time.hour*60)+(time.minute)+(time.second/60)
-        return timeMinutes
+        return round(timeMinutes, 2)
 
     #convert to integers
     bare_frame["Swim Minutes"] = bare_frame["Swim"].apply(convertTime)
@@ -38,10 +38,10 @@ def create_time_columns(bare_frame):
     #bare_frame["Elapsed Minutes"] = bare_frame["Chip Elapsed"].apply(convertTime)
 
     #create cumulative times
-    bare_frame["Swim+T1"]=bare_frame["Swim Minutes"]+bare_frame["T1 Minutes"]
-    bare_frame["Plus Bike"]=bare_frame["Swim+T1"]+bare_frame["Bike Minutes"]
-    bare_frame["Plus T2"]=bare_frame["Plus Bike"]+bare_frame["T2 Minutes"]
-    bare_frame["Total"]=bare_frame["Plus T2"]+bare_frame["Run Minutes"]
+    bare_frame["Swim+T1"]=round(bare_frame["Swim Minutes"]+bare_frame["T1 Minutes"], 2)
+    bare_frame["Plus Bike"]=round(bare_frame["Swim+T1"]+bare_frame["Bike Minutes"], 2)
+    bare_frame["Plus T2"]=round(bare_frame["Plus Bike"]+bare_frame["T2 Minutes"], 2)
+    bare_frame["Total"]=round(bare_frame["Plus T2"]+bare_frame["Run Minutes"], 2)
 
     return bare_frame
 
@@ -99,8 +99,8 @@ def render_content(tab):
     if tab == 'tab-1':
         return html.Div(dash_table.DataTable(
                             id='table-sorting-filtering',
-                            columns=[{'name': i, 'id': i} for i in reduced2.columns],
-                            data=reduced2.to_dict('records'),
+                            columns=[{'name': i, 'id': i} for i in time_df.columns],
+                            data=time_df.to_dict('records'),
                             style_table={'overflowX': 'scroll'},
                             style_cell={
                                 'height': '90',
