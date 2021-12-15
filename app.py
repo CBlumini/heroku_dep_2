@@ -18,8 +18,9 @@ print('hello')
 #this would be the point to read the data from the DB
 
 #can just provide an s3 or github link 
-#data = pd.read_excel('santa_cruz_data.xlsx', header = 0, index_col=None)
-data = pd.read_excel('raw.githubusercontent.com/cblumini/heroku_dep_2/main/santa_cruz_data.xlsx', header = 0, index_col=None)
+data = pd.read_excel('santa_cruz_data.xlsx', header = 0, index_col=None)
+
+#data = pd.read_excel('raw.githubusercontent.com/cblumini/heroku_dep_2/main/santa_cruz_data.xlsx', header = 0, index_col=None)
 data.head()
 
 #the data does not come in the right form to do math on it. So convert the times to minutes and decimal seconds
