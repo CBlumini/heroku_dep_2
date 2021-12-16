@@ -12,23 +12,18 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_table
+import os
+import time
 
-print('hello')
-
-#this would be the point to read the data from the DB
-
-#can just provide an s3 or github link 
-data = pd.read_excel('santa_cruz_data.xlsx', header = 0, index_col=None)
-
-#data = pd.read_excel('raw.githubusercontent.com/cblumini/heroku_dep_2/main/santa_cruz_data.xlsx', header = 0, index_col=None)
-data.head()
+data = pd.read_csv('https://github.com/CBlumini/heroku_dep_2/raw/main/Santa-Cruz-Sprint.csv', header=0, index_col=None)
 
 #the data does not come in the right form to do math on it. So convert the times to minutes and decimal seconds
 #maybe setup a compute file to do this by itself later
 def create_time_columns(bare_frame):
     def convertTime (time):
-        timeMinutes = (time.hour*60)+(time.minute)+(time.second/60)
-        return round(timeMinutes, 2)
+        temp = time.split(':')
+        timeMinutes = (int(temp[0])*60)+int(temp[1])+int(temp[2])/60
+        return timeMinutes
 
     #convert to integers
     bare_frame["Swim Minutes"] = bare_frame["Swim"].apply(convertTime)
