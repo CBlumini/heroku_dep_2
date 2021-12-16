@@ -12,15 +12,33 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_table
+import os
+import time
+#import boto3
 
-print('hello')
+AWS_S3_BUCKET = os.getenv("AWS_S3_BUCKET")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_SESSION_TOKEN = os.getenv("AWS_SESSION_TOKEN")
+
+
+#s3 = boto3.client('s3')
+#obj = s3.get_object(Bucket='tridata', Key='key')
+
+#print('hello')
 
 #this would be the point to read the data from the DB
 
 #can just provide an s3 or github link 
 #data = pd.read_excel('santa_cruz_data.xlsx', header = 0, index_col=None)
-data = pd.read_excel('raw.githubusercontent.com/cblumini/heroku_dep_2/main/santa_cruz_data.xlsx', header = 0, index_col=None)
-data.head()
+# data = pd.read_excel(f"s3://tridata/santa_cruz_data.xlsx",
+#                     storage_options = {
+#                                 "key": AWS_ACCESS_KEY_ID,
+#                                  "secret": AWS_SECRET_ACCESS_KEY,
+#                                  "token": AWS_SESSION_TOKEN,
+#                     }, header = 0, index_col=None)
+# #data.head()
+data = pd.read_excel('https://github.com/CBlumini/heroku_dep_2/blob/9392294f52b096a61d131018eb317ba81efc798e/santa_cruz_data.xlsx?raw=true', header=0, index_col=None)
 
 #the data does not come in the right form to do math on it. So convert the times to minutes and decimal seconds
 #maybe setup a compute file to do this by itself later
