@@ -75,7 +75,7 @@ para_cor.update_layout(
     height=1080)
 
 #create a scatter plot
-scatter = px.scatter(time_df, x=time_df['Age'], y=time_df['Gender Place'])
+scatter = px.scatter(time_df, x=time_df['Age'], y=time_df['Div Place'], trendline = 'ols')
 #scatter.show()
 
 
@@ -92,20 +92,23 @@ app.layout = html.Div([
     html.Div(id='tabs-content')
 ])
 
-#create a data table
+#create a data table, name the columns
+dash_columns=["Bib", "Name", "Age", "Gender", "Team Name", "City", "Swim", "T1", "Bike", "T2", "Run", "Chip Elapsed", "Div Place", "Age Place", 
+              "Gender Place"]
+#create the page
 @app.callback(Output('tabs-content', 'children'), [Input('tabs', 'value')])
 def render_content(tab):
     if tab == 'tab-1':
         return html.Div(dash_table.DataTable(
                             id='table-sorting-filtering',
-                            columns=[{'name': i, 'id': i} for i in time_df.columns],
+                            columns=[{'name': i, 'id': i} for i in dash_columns],
                             data=time_df.to_dict('records'),
                             style_table={'overflowX': 'scroll'},
                             style_cell={
                                 'height': '90',
                                 #'minWidth': '110%',
-                                'minWidth': '100px', 'width': '120px', 'maxWidth': '140px',
-                                'whiteSpace': 'normal'},
+                                'minWidth': '60px', 'width': '100px', 'maxWidth': '140px',
+                                'whiteSpace': 'normal', 'textAlign': 'center'},
                             style_cell_conditional=[        {
                                 'if': {'column_id': 'Name'},
                                 'textAlign': 'center'
