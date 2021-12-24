@@ -75,7 +75,7 @@ para_cor.update_layout(
     height=1080)
 
 #create a scatter plot
-scatter = px.scatter(time_df, x=time_df['Age'], y=time_df['Div Place'])
+scatter = px.scatter(time_df, x=time_df['Age'], y=time_df['Div Place'], trendline = 'ols')
 #scatter.show()
 
 
